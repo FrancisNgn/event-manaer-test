@@ -1,17 +1,14 @@
 <template>
-  <div id="app">
-    <div class="app-title">Mes Evenements</div>
-    <div class="app-content">
-      <div class="app-content__event-list">
-        <event-item v-for="event in events" :key="event.id" :event="event" :onClick="setCurrentEvent"/>
+  <div id="app" class="container">
+    <div class="app-title py-2 row">Mes évènements</div>
+    <div class="app-content d-flex row">
+      <div class="col-md-3 app-content__event-list bg-light border d-flex flex-column">
+        <event-item v-for="event in events" :key="event.id" :active="event.id === currentEvent.id" :event="event" :onClick="setCurrentEvent"/>
       </div>
-      <div class="app-content__edit-form">
-        <event-form :event="currentEvent" v-if="currentEvent.id !==0"/>
-        <div v-else>Please select an Event for edition</div>
-      </div>
-      <div class="app-content__comment-list" v-if="currentEvent.id !==0">
-        <div>Commentaires</div>
-        <event-comment-item v-for="comment in currentEvent.comments" :key="comment.id" :event-id="currentEvent.id" :event-comment="comment"/>
+      <event-form :event="currentEvent" v-if="currentEvent.id !==0"/>
+      <div v-else class="col-md-9 d-flex flex-column flex-grow-1  pl-3 pt-3 align-items-center justify-content-center">
+        <b-icon icon="exclamation-triangle" font-scale="5"/>
+        <h2>Choisissez un évènement</h2>
       </div>
     </div>
   </div>
@@ -21,7 +18,6 @@
 
 import EventItem from './components/EventItem.vue'
 import EventForm from "./components/EventFrom";
-import EventCommentItem from "./components/EventCommentItem";
 import {getEvents, getEventComments} from "./assets/data";
 
 export default {
@@ -33,7 +29,6 @@ export default {
     }
   },
   components: {
-    EventCommentItem,
     EventForm,
     EventItem
   },
@@ -54,12 +49,21 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+  }
+  .app-content{
+  }
+  .app-title{
+    color: #7b7b7b;
+    font-size: 20px;
+    text-align: left;
+  }
+  .app-content__event-list{
+    overflow-y: scroll;
+    height: 637px;
+  }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="event-item" @click="onClick(event)">
-    <h1>{{ event.title }}</h1>
+  <div class="event-item d-flex my-2 px-4 py-3 bg-white border" :class="(active)?'border-success':''" @click="onClick(event)">
+    {{ event.title }}
   </div>
 </template>
 
@@ -9,6 +9,7 @@ export default {
   name: 'EventItem',
   props: {
     event: Object,
+    active: Boolean,
     onClick: Function
   }
 }
@@ -17,7 +18,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .event-item{
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 12px;
+    font-size: 16px;
+    cursor: pointer;
   }
 </style>
