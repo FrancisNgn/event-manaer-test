@@ -4,7 +4,6 @@
     <div class="app-content">
       <div class="app-content__event-list">
         <event-item v-for="event in events" :key="event.id" :event="event"/>
-        rffrfr
       </div>
       <div class="app-content__edit-form"><hello-world :msg="currentEventIndex"/></div>
       <div class="app-content__comment-list">content__comment</div>
@@ -21,7 +20,7 @@ export default {
   name: 'App',
   data: ()=> {
     return {
-      currentEventIndex : 'de',
+      currentEventIndex : null,
       events : [],
     }
   },
@@ -29,9 +28,14 @@ export default {
     HelloWorld,
     EventItem
   },
-  mounted: ()=>{
-    // this.events = [...getEvents()];
-    console.log(getEvents());
+  mounted: function(){
+    this.getAllEvent();
+  }, 
+  methods:{
+    getAllEvent(){
+      this.events = getEvents();
+      console.log('API CALL TO GET DATA');
+    },
   }
 }
 </script>
