@@ -1,22 +1,21 @@
 <template>
-  <div class="event-item" @click="onClick(event)">
+  <div class="event-form">
     <h1>{{ event.title }}</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EventItem',
+  name: 'EventForm',
   props: {
     event: Object,
-    onClick: Function
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .event-item{
+  .event-form{
     font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
   }

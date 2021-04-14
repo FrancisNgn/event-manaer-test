@@ -101,6 +101,15 @@ const employees = [
 ]
 
 /**
+ * Retourne tous les employees
+ * Return all events
+ * @function
+ * @param
+ */
+export function getEmployees() {
+    return employees;
+}
+/**
  * Retourne tous les événements
  * Return all events
  * @function
@@ -136,7 +145,7 @@ export function getEvent(index) {
  * @function
  * @param {Number} index - Id de l'événement / Id of the event
  */
-export function GetEventComments(index) {
+export function getEventComments(index) {
     if (typeof(index) !== "number") {
         throw "Invalid index";
     }

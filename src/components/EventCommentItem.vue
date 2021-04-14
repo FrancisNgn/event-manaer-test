@@ -1,14 +1,17 @@
 <template>
-  <div class="event-item" @click="onClick(event)">
-    <h1>{{ event.title }}</h1>
+  <div class="event-comment-item">
+    <h4>{{ eventComment.author }}</h4>
+    <h3>{{ eventComment.content }}</h3>
+    <small>{{ eventComment.creationDate }}</small>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'EventItem',
+  name: 'EventCommentItem',
   props: {
-    event: Object,
+    eventId: Number,
+    eventComment: Object,
     onClick: Function
   }
 }
@@ -16,7 +19,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .event-item{
+  .event-comment-item{
     font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
   }
