@@ -1,6 +1,6 @@
 <template>
-  <div class="event-item d-flex my-2 px-4 py-3 bg-white border" :class="(active)?'border-success':''" @click="onClick(event)">
-    {{ event.title }}
+  <div class="event-item d-flex my-2 px-4 py-3 bg-white border" :class="(active)?'border-success':''" @click="onClick(eventItem)">
+    {{ eventItem.title }}
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
   name: 'EventItem',
   props: {
-    event: Object,
+    eventItem: Object,
     active: Boolean,
     onClick: Function
   }

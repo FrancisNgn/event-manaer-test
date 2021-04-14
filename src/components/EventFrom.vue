@@ -3,8 +3,8 @@
     <div class="app-content__edit-form col-md-9 ">
         <div class="d-flex flex-column row">
             <div class="col-md-12">
-                <h5 class="mb-0">{{ event.title }}</h5>
-                <small>Crée le {{ event.creationDate | formatDateTime }} par {{ event.createdBy }}</small>
+                <h5 class="mb-0">{{ eventItem.title }}</h5>
+                <small>Crée le {{ eventItem.creationDate | formatDateTime }} par {{ eventItem.createdBy }}</small>
             </div>
         </div>
         <div class="app-content row d-flex pt-3">
@@ -13,7 +13,7 @@
                     <label class="control-label required" for="event_title">Titre</label>
                     <b-form-input class=""
                                   id="event_title"
-                                  v-model="event.title"
+                                  v-model="eventItem.title"
                                   placeholder="Titre de l'evenement..."
                                   required
                     />
@@ -22,7 +22,7 @@
                     <label class="control-label" for="event_description">Description</label>
                     <b-form-textarea
                             id="event_description"
-                            v-model="event.description"
+                            v-model="eventItem.description"
                             placeholder="Entrez une description..."
                             rows="5"
                             max-rows="6"
@@ -34,15 +34,15 @@
                         <b-input-group class="d-flex">
                             <b-form-input
                                     id="event_date"
-                                    v-model="event.date"
+                                    v-model="eventItem.date"
                                     type="text"
                                     placeholder="YYYY-MM-DD"
                                     autocomplete="off"
-                                    class="w-auto"
+                                    class="w-50"
                             ></b-form-input>
                             <b-input-group-append class="h-32">
                                 <b-form-datepicker
-                                        v-model="event.date"
+                                        v-model="eventItem.date"
                                         button-only
                                         right
                                         locale="fr-FR"
@@ -57,14 +57,14 @@
                         <b-input-group class="mb-3">
                             <b-form-input
                                     id="event_hour"
-                                    v-model="event.hour"
+                                    v-model="eventItem.hour"
                                     type="text"
                                     placeholder="HH:mm:ss"
-                                    class="w-auto"
+                                    class="w-50"
                             ></b-form-input>
                             <b-input-group-append class="h-32">
                                 <b-form-timepicker
-                                        v-model="event.hour"
+                                        v-model="eventItem.hour"
                                         button-only
                                         right
                                         show-seconds
@@ -77,21 +77,25 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label required" for="project_name">Nom du statut</label>
-                    <b-form-select v-model="event.statusName" :options="stateOptions"></b-form-select>
+                    <b-form-select v-model="eventItem.statusName" :options="stateOptions"></b-form-select>
                 </div>
                 <div class="form-group">
                     <label class="control-label required" for="project_name">Employée concerné</label>
-                    <b-form-select v-model="event.involvedEmployeeId" :options="employees"></b-form-select>
+                    <b-form-select v-model="eventItem.involvedEmployeeId" :options="employees"></b-form-select>
                 </div>
                 <div class="form-group">
                     <label class="control-label required" for="project_name">Témoins</label>
-                    <b-form-select v-model="event.Témoins" :options="employeesTemois" multiple></b-form-select>
+                    <b-form-select v-model="eventItem.Témoins" :options="employeesTemoins" multiple></b-form-select>
                 </div>
             </div>
             <div class="app-content__comment-list col-md-5">
                 <b>Commentaires</b>
-                <div class="app-content__comment-list__content bg-light border" id="app-content__comment-list__content">
-                    <event-comment-item v-for="(comment, index) in event.comments" :key="index" :event-comment="comment" @remove="deleteComment(index)" @edit="deleteComment(index)"/>
+                <div class="app-content__comment-list__content bg-light border scrollbar" id="app-content__comment-list__content">
+                    <event-comment-item
+                            v-for="(comment, index) in comments"
+                            :key="index"
+                            :event-comment="comment"
+                            @remove="deleteComment(index)" @edit="editComment(index)"/>
                 </div>
                 <b-form @submit="onSubmitNewComment" class="d-flex p-2 border border-top-0" v-if="newCommentShow">
                     <b-form-input class="mr-2 app-content__comment-list__new-comment"
@@ -99,7 +103,7 @@
                                   placeholder="Laissez un commentaire..."
                                   required
                     />
-                    <b-button type="submit" variant="primary">
+                    <b-button type="submit" variant="success">
                         <b-icon icon="upload" font-scale="1"/>
                     </b-button>
                 </b-form>
@@ -110,23 +114,26 @@
 
 <script>
     import EventCommentItem from "./EventCommentItem";
-    import {getEmployees} from "../assets/data";
+    import {getEmployees, getEventComments} from "../assets/data";
+    
     export default {
         name: 'EventForm',
         components: {EventCommentItem},
         props: {
-            event: Object,
+            eventItem: Object,
             // updateEvent: Function,
         },
         data(){
             return {
+                comments : [],
                 employees : [],
-                employeesTemois : [],
+                employeesTemoins : [],
                 stateOptions: [
                     { value: 'Open', text: 'Ouvert' },
                     { value: 'Closed', text: 'Fermé' },
                     { value: 'InProgress', text: 'En cours' },
                 ],
+                currentEditCommentIndex: null,
                 formatted: '',
                 selected: '',
                 newCommentShow: true,
@@ -141,10 +148,19 @@
             this.employees = getEmployees().map( em => {
                 return {value: em.id, text: em.firstname+' '+em.lastname+' ('+em.id+')'}
             });
-            this.employeesTemois = getEmployees().map( em => {
+            this.employeesTemoins = getEmployees().map( em => {
                 return {value: em.id, text: em.firstname}
             });
-            console.log('API CALL TO GET EMPLYEES DATA');
+            this.comments = [...getEventComments(this.eventItem.id)];
+            console.log('API CALL TO GET DATA');
+        },
+        watch:{
+            eventItem: function(newEvent, oldEvent){
+                if(newEvent.id !== oldEvent.id){
+                    this.comments = [...getEventComments(this.eventItem.id)];
+                    console.log('API CALL TO GET COMMENTS DATA');
+                }
+            }
         },
         methods: {
             onContext(ctx) {
@@ -153,24 +169,30 @@
             },
             deleteComment(index) {
                 console.log(index);
-                this.event.comments = [...this.event.comments.splice(index, 1)];
+                this.comments.splice(index, 1);
             },
             editComment(index) {
-                console.log(index);
-                this.newComment.content = this.event.comments[index].content;
+                this.newComment.content = this.comments[index].content;
+                this.currentEditCommentIndex = index;
+                console.log(index, this.comments[index].content);
             },
             onSubmitNewComment(event) {
                 event.preventDefault();
-                this.event.comments.push({...this.newComment,creationDate : new Date().toISOString()});
+                if(this.currentEditCommentIndex === null){
+                    this.comments.push({...this.newComment,creationDate : new Date().toISOString()});
+                    // // Trick to reset/clear native browser form validation state
+                    this.newCommentShow = false;
+                    this.$nextTick(() => {
+                        this.newCommentShow = true;
+                        // Scroll to botom
+                        const commentListContent = document.getElementById("app-content__comment-list__content");
+                        commentListContent.scrollTop = commentListContent.scrollHeight;
+                    })
+                } else{
+                    this.comments[this.currentEditCommentIndex] = {...this.newComment,creationDate : new Date().toISOString()};
+                    this.currentEditCommentIndex = null;
+                }
                 this.newComment.content = '';
-                // // Trick to reset/clear native browser form validation state
-                this.newCommentShow = false;
-                this.$nextTick(() => {
-                    this.newCommentShow = true;
-                    // Scroll to botom
-                    const commentListContent = document.getElementById("app-content__comment-list__content");
-                    commentListContent.scrollTop = commentListContent.scrollHeight;
-                })
             },
         }
     }
@@ -191,7 +213,7 @@
         height: auto;
     }
     .app-content__comment-list__content{
-        height: 500px;
+        height: 495px;
         overflow-y: scroll;
     }
     .app-content__event-form{

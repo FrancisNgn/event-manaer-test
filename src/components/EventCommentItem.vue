@@ -6,8 +6,8 @@
     <div class="d-flex flex-column flex-grow-1">
       <div class="event-comment-item__author text-black-50 d-flex">
         {{ eventComment.author }}
-        <b-icon icon="pencil" variant="success" class="ml-auto btn-comment-pointer" @click="$emit('edit')"/>
-        <b-icon icon="trash" variant="danger" class="ml-1 btn-comment-pointer" @click="$emit('remove')"/>
+        <b-icon icon="pencil" variant="success" class="ml-auto btn-comment-pointer" font-scale="1.5" @click="$emit('edit')"/>
+        <b-icon icon="trash" variant="danger" class="ml-1 btn-comment-pointer" font-scale="1.5" @click="$emit('remove')"/>
       </div>
       <div class="event-comment-item__content">{{ eventComment.content }}</div>
       <small class="event-comment-item__date ml-auto text-black-50">{{ eventComment.creationDate | formatDate }}</small>
@@ -19,8 +19,7 @@
 export default {
   name: 'EventCommentItem',
   props: {
-    eventComment: Object,
-    onDelete: Function
+    eventComment: Object
   }
 }
 </script>
